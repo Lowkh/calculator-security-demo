@@ -102,6 +102,35 @@ jobs:
         run: |
           pip-audit -r requirements.txt -f json -o pip-audit-report.json || true
 
+      - name: Print pip-audit summary
+        run: |
+          python - << 'EOF'
+          import json, pathlib
+
+          path = pathlib.Path("pip-audit-report.json")
+          if not path.exists():
+              print("pip-audit-report.json not found, skipping summary")
+              raise SystemExit(0)
+
+          with path.open() as f:
+              data = json.load(f)
+
+          if isinstance(data, dict) and "dependencies" in data:
+              deps = data["dependencies"]
+          else:
+              deps = data
+
+          total_vulns = 0
+          vulnerable_pkgs = 0
+          for dep in deps:
+              vulns = dep.get("vulns", [])
+              if vulns:
+                  vulnerable_pkgs += 1
+                  total_vulns += len(vulns)
+
+          print(f"pip-audit summary: Found {total_vulns} known vulnerabilities in {vulnerable_pkgs} packages")
+          EOF
+
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
         if: always()
@@ -242,8 +271,8 @@ jobs:
           echo "## Scan Results" >> $GITHUB_STEP_SUMMARY
           echo "- SAST (CodeQL): completed; check Security tab for findings" >> $GITHUB_STEP_SUMMARY
           echo "- SCA (Dependency-Check): completed; see sca-reports artifact" >> $GITHUB_STEP_SUMMARY
-          echo "- SCA (pip-audit): completed; see pip-audit-report artifact" >> $GITHUB_STEP_SUMMARY
+          echo "- SCA (pip-audit): completed; see pip-audit-report artifact and pipeline log summary" >> $GITHUB_STEP_SUMMARY
           echo "- DAST (ZAP): completed; see zap-baseline-reports and zap-fullscan-reports" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Notes" >> $GITHUB_STEP_SUMMARY
-          echo "- In this beginner lab, ZAP and pip-audit findings do NOT fail the pipeline. Use the reports to learn how to read and prioritize findings." >> $GITHUB_STEP_SUMMARY
+          echo "- In this beginner lab, ZAP and pip-audit findings do NOT fail the pipeline. Use the reports and summaries to learn how to read and prioritize findings." >> $GITHUB_STEP_SUMMARY
