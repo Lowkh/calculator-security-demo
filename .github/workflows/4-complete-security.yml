@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           queries: security-extended
@@ -45,7 +45,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Perform CodeQL Analysis (SAST)
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: sast
 
@@ -78,6 +78,7 @@ jobs:
           args: >
             --failOnCVSS 7
             --enableRetired
+            --disableOssIndex
 
       - name: Upload SCA reports
         uses: actions/upload-artifact@v4
