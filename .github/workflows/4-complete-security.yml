@@ -100,7 +100,7 @@ jobs:
 
       - name: Run pip-audit on requirements.txt
         run: |
-          pip-audit -r requirements.txt -f json -o pip-audit-report.json
+          pip-audit -r requirements.txt -f json -o pip-audit-report.json || true
 
       - name: Upload pip-audit report
         uses: actions/upload-artifact@v4
@@ -246,4 +246,4 @@ jobs:
           echo "- DAST (ZAP): completed; see zap-baseline-reports and zap-fullscan-reports" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Notes" >> $GITHUB_STEP_SUMMARY
-          echo "- In this beginner lab, ZAP alerts do NOT fail the pipeline. Use the reports to learn how to read and prioritize findings." >> $GITHUB_STEP_SUMMARY
+          echo "- In this beginner lab, ZAP and pip-audit findings do NOT fail the pipeline. Use the reports to learn how to read and prioritize findings." >> $GITHUB_STEP_SUMMARY
