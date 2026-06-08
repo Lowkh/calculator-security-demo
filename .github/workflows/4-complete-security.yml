@@ -168,7 +168,7 @@ jobs:
           cmd_options: '-a'
           allow_issue_writing: false
           artifact_name: 'zap-baseline-scan'
-        continue-on-error: true
+          fail_action: true
 
       - name: Preserve baseline reports
         if: always()
@@ -181,10 +181,9 @@ jobs:
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: 'http://localhost:5000'
-          cmd_options: '-a -j'
+          cmd_options: '-a -j -I'
           allow_issue_writing: false
           artifact_name: 'zap-fullscan-scan'
-        continue-on-error: true
 
       - name: Preserve full scan reports
         if: always()
@@ -224,4 +223,4 @@ jobs:
           echo "- DAST (ZAP): completed; see zap-baseline-reports and zap-fullscan-reports" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Notes" >> $GITHUB_STEP_SUMMARY
-          echo "- DAST steps use continue-on-error so you should still inspect reports and logs" >> $GITHUB_STEP_SUMMARY
+          echo "- This demo intentionally fails when serious SAST, SCA, or DAST findings are present. Use the reports and logs to decide what to fix next." >> $GITHUB_STEP_SUMMARY
