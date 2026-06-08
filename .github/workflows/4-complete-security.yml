@@ -121,7 +121,7 @@ jobs:
           exit 1
 
   dast:
-    name: "4️⃣ DAST - Live Security Scan"
+    name: "4️⃣ DAST - Live Security Scan (Beginner Friendly)"
     runs-on: ubuntu-latest
     needs: build
 
@@ -161,14 +161,14 @@ jobs:
         run: |
           mkdir -p reports/baseline reports/fullscan
 
-      - name: ZAP Baseline Scan
+      - name: ZAP Baseline Scan (non-blocking)
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:5000'
-          cmd_options: '-a'
+          cmd_options: '-a -j -I'
           allow_issue_writing: false
           artifact_name: 'zap-baseline-scan'
-          fail_action: true
+          fail_action: false
 
       - name: Preserve baseline reports
         if: always()
@@ -177,7 +177,7 @@ jobs:
           [ -f report_json.json ] && mv report_json.json reports/baseline/report.json || true
           [ -f report_md.md ] && mv report_md.md reports/baseline/report.md || true
 
-      - name: ZAP Full Scan
+      - name: ZAP Full Scan (non-blocking)
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: 'http://localhost:5000'
@@ -223,4 +223,4 @@ jobs:
           echo "- DAST (ZAP): completed; see zap-baseline-reports and zap-fullscan-reports" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Notes" >> $GITHUB_STEP_SUMMARY
-          echo "- This demo intentionally fails when serious SAST, SCA, or DAST findings are present. Use the reports and logs to decide what to fix next." >> $GITHUB_STEP_SUMMARY
+          echo "- In this beginner lab, ZAP alerts do NOT fail the pipeline. Use the reports to learn how to read and prioritize findings." >> $GITHUB_STEP_SUMMARY
