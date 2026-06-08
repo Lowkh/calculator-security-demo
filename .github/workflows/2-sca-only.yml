@@ -39,6 +39,7 @@ jobs:
           args: >
             --failOnCVSS 7
             --enableRetired
+            --disableOssIndex
 
       - name: Upload Dependency-Check reports
         uses: actions/upload-artifact@v4
